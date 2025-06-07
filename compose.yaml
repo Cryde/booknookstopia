@@ -1,25 +1,66 @@
-
 services:
-###> doctrine/doctrine-bundle ###
-  database:
-    image: postgres:${POSTGRES_VERSION:-16}-alpine
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
-      POSTGRES_USER: ${POSTGRES_USER:-app}
-    healthcheck:
-      test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB:-app}", "-U", "${POSTGRES_USER:-app}"]
-      timeout: 5s
-      retries: 5
-      start_period: 60s
+
+  php-web:
+    build: .docker/frankenphp
+    container_name: php-web
+    # uncomment the following line if you want to use a custom Dockerfile
+    #build: .
+    # uncomment the following line if you want to run this in a production environment
+    # restart: always
+    ports:
+      - "80:80" # HTTP
+      - "443:443" # HTTPS
+      - "443:443/udp" # HTTP/3
     volumes:
-      - database_data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
-###< doctrine/doctrine-bundle ###
+      - $PWD:/var/www/booknooks
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      APP_ENV: 'dev'
+      SERVER_NAME: 'booknooks.local'
+      APP_RUNTIME: 'Runtime\FrankenPhpSymfony\Runtime'
+      #FRANKENPHP_CONFIG: 'worker ./public/index.php'
+    # comment the following line in production, it allows to have nice human-readable logs in dev
+    tty: true
+    networks:
+      booknooks-network:
+        ipv4_address: 10.0.200.6
+
+  php-cli:
+    build: .docker/cli-php
+    container_name: php-cli
+    working_dir: /var/www
+    command: /bin/true
+    networks:
+      booknooks-network:
+        ipv4_address: 10.0.200.2
+    volumes:
+      - .:/var/www:cached
+
+  postgres:
+    image: postgres:17.5-alpine3.21
+    container_name: postgres
+    volumes:
+      - "./volumes/postgres:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_USER=booknooks_user
+      - POSTGRES_PASSWORD=booknooks_password
+      - POSTGRES_DB=booknooks_db
+    user: 1000:1000
+    ports:
+      - "5432:5432"
+    networks:
+      booknooks-network:
+        ipv4_address: 10.0.200.7
 
 volumes:
-###> doctrine/doctrine-bundle ###
-  database_data:
-###< doctrine/doctrine-bundle ###
+  caddy_data:
+  caddy_config:
+
+networks:
+  booknooks-network:
+    name: booknooks
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.200.0/28
