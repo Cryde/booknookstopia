@@ -1,0 +1,22 @@
+<template>
+    <div class="bg-surface-0 dark:bg-surface-950 px-6 py-8 md:px-12 lg:px-20">
+        <div class="flex flex-col gap-8">
+            <div class="text-xl font-semibold leading-tight text-surface-900 dark:text-surface-0">Home</div>
+            <div class="border-b border-surface-200 dark:border-surface-700">
+
+                This website is still in development.<br/><br/>
+
+                Very soon you will be able to submit you manual kit (in PDF or images).<br/><br/>
+
+                What will come next :
+                <ul>
+                    <li>Space where users can share youtube video tutorials or written ones</li>
+                    <li>Share and see reviews of booknooks</li>
+                    <li>Page where tips, </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</template>
+<script setup>
+</script>
