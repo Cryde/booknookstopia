@@ -24,10 +24,14 @@ security:
         api:
             pattern: ^/api/
             lazy: true
+            entry_point: jwt
             stateless: true
             provider: app_user_provider
             jwt: ~
-
+            refresh_jwt:
+                check_path: /api/token/refresh
+            logout:
+                path: api_token_invalidate
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
