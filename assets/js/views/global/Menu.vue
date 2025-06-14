@@ -30,7 +30,7 @@
                         </a>
                         <Avatar v-if="user" :label="user.username.split('')[0]" class="cursor-pointer" shape="circle" />
                         <a class="cursor-pointer" @click="logoutClick">
-                            <i class="pi pi-sign-out !text-xl !leading-normal text-surface-600 dark:text-surface-300" />
+                            <i class="pi pi-power-off !text-xl !leading-normal text-surface-600 dark:text-surface-300" />
                         </a>
                     </template>
                     <template v-else>
