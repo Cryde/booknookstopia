@@ -8,7 +8,11 @@ export default {
         .then(resp => resp.data);
     },
     refreshToken() {
-        /*return axios.post(Routing.generate('api_refresh_token'))
-        .then(resp => resp.data);*/
+        return axios.post(Routing.generate('api_refresh_token'))
+        .then(resp => resp.data);
+    },
+    logout() {
+        return axios.post(Routing.generate('api_token_invalidate'))
+        .then(resp => resp.data);
     }
 };

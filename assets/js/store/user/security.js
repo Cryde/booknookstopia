@@ -22,6 +22,7 @@ export const useUserSecurityStore = defineStore('userSecurity', () => {
     const user = computed(() => userState.value);
 
     async function login(login, password) {
+        errorsState.value = [];
         isLoginLoadingState.value = true;
         try {
             await security.login(login, password);
@@ -40,32 +41,36 @@ export const useUserSecurityStore = defineStore('userSecurity', () => {
     async function checkAuthInfo() {
         isAuthenticatedLoadingState.value = true;
         const jwt = Cookies.get('jwt_hp');
-        console.log(jwt);
         if (!jwt) {
             isAuthenticatedState.value = false;
             isAuthenticatedLoadingState.value = false;
-            return;
+
+            return false;
         }
 
         const decodedJwt = jwtDecode(jwt);
         if (isTokenExpired(decodedJwt)) {
             console.log('is expired');
-            // commit(UPDATE_AUTH_REQUESTED, true);
-            //refresh
             await security.refreshToken();
-            // commit(UPDATE_AUTH_REQUESTED, false);
-            // displayLoading && commit(UPDATE_IS_LOADING, false);
-            // commit(UPDATE_AUTH_STATE, {token: resp.token, refresh_token: resp.refresh_token});
-            // commit(UPDATE_LOCALE_STORAGE, {token: resp.token, refresh_token: resp.refresh_token});
+
+            return checkAuthInfo();
         }
 
         userState.value = {roles: decodedJwt.roles, username: decodedJwt.username};
         isAuthenticatedState.value = true;
         isAuthenticatedLoadingState.value = false;
+
+        return true;
     }
 
     function isTokenExpired(decodedJwt) {
+        // we refresh it if it expire in 240 seconds
         return decodedJwt.exp - 240 <= (Date.now() / 1000).toFixed(0);
+    }
+
+    async function logout() {
+        await security.logout();
+        await checkAuthInfo();
     }
 
     return {
@@ -85,6 +90,7 @@ export const useUserSecurityStore = defineStore('userSecurity', () => {
 
         // actions
         login,
-        checkAuthInfo
+        checkAuthInfo,
+        logout
     }
 });

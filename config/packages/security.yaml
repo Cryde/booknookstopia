@@ -32,6 +32,12 @@ security:
                 check_path: /api/token/refresh
             logout:
                 path: api_token_invalidate
+                delete_cookies:
+                    jwt_hp: null
+                    jwt_s: null
+                clear_site_data:
+                    - cookies
+                    - storage
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 

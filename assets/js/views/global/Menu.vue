@@ -29,7 +29,7 @@
                             <i class="pi pi-cog !text-xl !leading-normal text-surface-600 dark:text-surface-300" />
                         </a>
                         <Avatar v-if="user" :label="user.username.split('')[0]" class="cursor-pointer" shape="circle" />
-                        <a class="cursor-pointer">
+                        <a class="cursor-pointer" @click="logoutClick">
                             <i class="pi pi-sign-out !text-xl !leading-normal text-surface-600 dark:text-surface-300" />
                         </a>
                     </template>
@@ -57,16 +57,23 @@
                 <ul class="flex lg:flex-row flex-col lg:items-center gap-4">
                     <li v-for="(item, index) of navs" :key="index">
                         <RouterLink :to="{name: item.to}"
-                            :class="[
+                                    custom
+                                    v-slot="{ isActive, href, navigate }"
+                        >
+                            <a
+                                v-bind="$attrs"
+                                :href="href"
+                                @click="navigate"
+                                :class="[
                                 'flex items-center gap-2 px-2.5 py-2 rounded-border cursor-pointer transition-colors duration-150 border',
-                                selectedNav === item.label
+                                isActive
                                     ? 'bg-surface-100 dark:bg-surface-800 border-surface-200 dark:border-surface-700'
                                     : 'bg-surface-0 dark:bg-surface-900 border-transparent hover:bg-surface-50 dark:hover:bg-surface-800 hover:border-surface-200 dark:hover:border-surface-700'
                             ]"
-                            @click="selectedNav = item.label"
-                        >
-                            <i :class="[`${item.icon} !text-base !leading-normal`, selectedNav === item.label ? 'text-surface-900 dark:text-surface-0' : 'text-surface-500 dark:text-surface-400']" />
-                            <span :class="['font-medium text-base leading-normal', selectedNav === item.label ? 'text-surface-900 dark:text-surface-0' : 'text-surface-600 dark:text-surface-300']">{{ item.label }}</span>
+                            >
+                                <i :class="[`${item.icon} !text-base !leading-normal`, isActive? 'text-surface-900 dark:text-surface-0' : 'text-surface-500 dark:text-surface-400']" />
+                                <span :class="['font-medium text-base leading-normal', isActive ? 'text-surface-900 dark:text-surface-0' : 'text-surface-600 dark:text-surface-300']">{{ item.label }}</span>
+                            </a>
                         </RouterLink>
                     </li>
                 </ul>
@@ -83,8 +90,6 @@ import {storeToRefs} from "pinia";
 const userSecurityStore = useUserSecurityStore();
 
 const {isAuthenticatedLoading, isAuthenticated, user} = storeToRefs(userSecurityStore);
-
-console.log(user.username);
 
 const navs = ref([
     {
@@ -103,5 +108,9 @@ const selectedNav = ref('Home');
 
 function toggleDarkMode() {
     document.documentElement.classList.toggle('app-mode');
+}
+
+function logoutClick() {
+    userSecurityStore.logout();
 }
 </script>

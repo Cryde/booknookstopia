@@ -1,5 +1,8 @@
-gesdinet_jwt_refresh_token:
+api_refresh_token:
     path: /api/token/refresh
-
+    options:
+        expose: true
 api_token_invalidate:
     path: /api/token/invalidate
+    options:
+        expose: true

@@ -9,7 +9,8 @@ const routes = [
     {
         name: 'app_manual_kits',
         path: '/manual-kits',
-        component: () => import("../views/ManualKit/List.vue")
+        component: () => import("../views/ManualKit/List.vue"),
+        meta: {isAuthRequired: true}
     },
     {
         name: 'app_login',

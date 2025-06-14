@@ -26,11 +26,14 @@
                     <label for="email1" class="text-surface-900 dark:text-surface-0 font-medium leading-normal">Email
                         Address</label>
                     <InputText id="email1" type="text" placeholder="Email address" v-model="username"
-                               class="w-full px-3 py-2 shadow-sm rounded-lg"/>
+                               @keyup.enter="login"
+                               class="w-full px-3 py-2 shadow-sm rounded-lg"
+                    />
                 </div>
                 <div class="flex flex-col gap-2 w-full">
                     <label for="password1" class="text-surface-900 dark:text-surface-0 font-medium leading-normal">Password</label>
                     <InputText id="password1" type="password" placeholder="Password" v-model="password"
+                               @keyup.enter="login"
                                class="w-full px-3 py-2 shadow-sm rounded-lg"/>
                 </div>
                 <div
@@ -78,6 +81,10 @@ const password = ref('');
 const isValid = computed(() => username.value.length && password.value.length);
 
 async function login() {
+    if (!isValid.value) {
+        return;
+    }
+
     await store.login(username.value, password.value)
     toast.add({ severity: 'success', summary: 'Login successful.', detail: 'Welcome, you\'re now logged in!', life: 3000 });
 }
