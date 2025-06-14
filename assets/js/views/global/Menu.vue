@@ -86,8 +86,10 @@ import { ref } from 'vue';
 import LogoSvg from "./LogoSvg.vue";
 import {useUserSecurityStore} from "../../store/user/security.js";
 import {storeToRefs} from "pinia";
+import {useUserPreferenceStore} from "../../store/user/userPreference.js";
 
 const userSecurityStore = useUserSecurityStore();
+const userPreferenceStore = useUserPreferenceStore();
 
 const {isAuthenticatedLoading, isAuthenticated, user} = storeToRefs(userSecurityStore);
 
@@ -104,10 +106,10 @@ const navs = ref([
     },
 ]);
 
-const selectedNav = ref('Home');
 
 function toggleDarkMode() {
-    document.documentElement.classList.toggle('app-mode');
+    userPreferenceStore.toggleDarkMode();
+
 }
 
 function logoutClick() {

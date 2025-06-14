@@ -12,6 +12,7 @@ import {useUserSecurityStore} from "./store/user/security.js";
 import axios from "axios";
 import {useRouter, useRoute} from 'vue-router'
 import {storeToRefs} from "pinia";
+import {useUserPreferenceStore} from "./store/user/userPreference.js";
 
 const router = useRouter()
 const route = useRoute()
